@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#393A3D</color>
+    <color name="colorPrimaryDark">#303135</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="color_white">#ffffff</color>
+
+    <color name="button_default">#4c4d51</color>
+    <color name="button_pressed">#58585c</color>
+
+    <!-- bottom navigation start-->
+    <color name="color_nav_default">#3E4757</color>
+    <color name="color_nav_pressed">#FF4081</color>
+    <!-- bottom navigation end-->
+</resources>

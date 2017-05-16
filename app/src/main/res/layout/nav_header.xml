@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:padding="10dp"
+    android:background="?attr/colorPrimary"
+    android:layout_height="180dp">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/icon_image"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/nav_icon"
+        android:layout_centerInParent="true"/>
+    <TextView
+        android:id="@+id/nav_userId"
+        style="@style/w_wrap_h_wrap"
+        android:layout_alignParentBottom="true"
+        android:text="2014010915013"
+        android:textColor="#FFF"
+        android:textSize="14sp"/>
+    <TextView
+        style="@style/w_wrap_h_wrap"
+        android:id="@+id/nav_username"
+        android:layout_above="@+id/nav_userId"
+        android:textSize="14sp"
+        android:textColor="#FFF"
+        android:text="蔡泽键"
+        />
+</RelativeLayout>

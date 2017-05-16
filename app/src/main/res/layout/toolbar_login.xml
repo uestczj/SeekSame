@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+style="@style/w_match_h_match"
+android:orientation="vertical"
+android:padding="20dp"
+    android:layout_marginTop="30dp"
+android:gravity="center">
+<LinearLayout
+    style="@style/w_match_h_match"
+    android:orientation="vertical"
+    android:layout_marginTop="20dp">
+    <EditText
+        android:id="@+id/edit_userName"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:hint="用户名"
+        android:background="@drawable/edittext_bg"
+        android:paddingLeft="20dp"
+        android:textSize="16dp" />
+    <EditText
+        android:id="@+id/edit_userPwd"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="10dp"
+        android:hint="密码"
+        android:background="@drawable/edittext_bg"
+        android:inputType="textPassword"
+        android:paddingLeft="20dp"
+        android:textSize="16dp" />
+    <LinearLayout
+        style="@style/w_match_h_wrap"
+        android:layout_marginRight="5dp"
+        android:orientation="vertical">
+        <CheckBox
+            android:id="@+id/rem_pwd"
+            style="@style/w_wrap_h_wrap"
+            android:text="记住密码"
+            android:layout_gravity="right"
+            android:textColor="@color/colorAccent" />
+    </LinearLayout>
+    <Button
+        android:onClick="btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="10dp"
+        android:text="登录"
+        android:background="@drawable/button_bg"
+        android:textColor="@android:color/white"/>
+</LinearLayout>
+<RelativeLayout
+    style="@style/w_match_h_wrap"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true">
+    <TextView
+        android:id="@+id/tv_forget"
+        style="@style/w_wrap_h_wrap"
+        android:layout_alignParentLeft="true"
+        android:text="@string/text_find_password"
+        android:textColor="@color/colorAccent"/>
+
+    <TextView
+        android:onClick="tv_register"
+        style="@style/w_wrap_h_wrap"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="right"
+        android:text="@string/text_registered"
+        android:textColor="@color/colorAccent"/>
+
+</RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_myposts"
+            android:icon="@drawable/nav_task"
+            android:title="我的帖子"/>
+        <item
+            android:id="@+id/nav_mygroups"
+            android:icon="@drawable/nav_friends"
+            android:title="关注部落"/>
+        <item
+            android:id="@+id/nav_editdata"
+            android:icon="@drawable/nav_mail"
+            android:title="编辑资料"/>
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/nav_location"
+            android:title="退出登录"/>
+    </group>
+</menu>
