@@ -2,6 +2,7 @@ package com.example.caizejian.seeksamehobbies.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -39,6 +40,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
         View groupView;
 
 
+
         public ViewHolder(View view){
             super(view);
             groupView = view;
@@ -46,6 +48,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
             groupsName = (TextView)view.findViewById(R.id.text_groups_bigName);
             groupsDesc = (TextView)view.findViewById(R.id.text_groups_desc);
             groupsImage = (ImageView)view.findViewById(R.id.groups_image);
+
 
         }
     }
@@ -59,18 +62,25 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
         if(mContext == null){
             mContext = parent.getContext();
         }
+
+
         final View view = LayoutInflater.from(mContext).inflate(R.layout.groups_item,parent,false);
         final ViewHolder holder = new ViewHolder(view);
         holder.groupView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int position = holder.getAdapterPosition();
+                final Bitmap bitmap1;
                 Groups groups = mGroupsList.get(position);
-                Intent intent = new Intent(view.getContext(), PostsListActivity.class);
+             //   Glide.with(mContext).load(groups.getGroupImage().getFileUrl()).into(drawable);
+
+                final   Intent intent = new Intent(view.getContext(), PostsListActivity.class);
                 intent.putExtra("group_name",groups.getGroupName());
                 intent.putExtra("group_desc", groups.getDesc());
                 intent.putExtra("group_id",groups.getObjectId());
                 intent.putExtra("postslist", STARTPOSTSLIST);
+                intent.putExtra("group_bg_image",groups.getGroupBGImage().getFileUrl());
+                intent.putExtra("group_image",groups.getGroupImage().getFileUrl());
                 view.getContext().startActivity(intent);
             }
         });

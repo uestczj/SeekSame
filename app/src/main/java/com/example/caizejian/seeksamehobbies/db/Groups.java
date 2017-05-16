@@ -16,6 +16,15 @@ public class Groups extends BmobObject {
     private int numOfPost;
     private int numOfUser;
     private BmobRelation memOfUser;
+    private BmobFile groupBGImage;
+
+    public BmobFile getGroupBGImage() {
+        return groupBGImage;
+    }
+
+    public void setGroupBGImage(BmobFile groupBGImage) {
+        this.groupBGImage = groupBGImage;
+    }
 
     public String getGroupName() {
         return groupName;

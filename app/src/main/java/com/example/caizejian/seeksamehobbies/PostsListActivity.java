@@ -1,6 +1,8 @@
 package com.example.caizejian.seeksamehobbies;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -10,17 +12,23 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.caizejian.seeksamehobbies.adapter.PostsAdapter;
 import com.example.caizejian.seeksamehobbies.db.Groups;
 import com.example.caizejian.seeksamehobbies.db.Posts;
 import com.example.caizejian.seeksamehobbies.db.User;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +51,8 @@ public class PostsListActivity extends MyActivity {
     private   String userObjectId;
     private int intentCode;
     private DrawerLayout mDrawerLayout;
+    private LinearLayout layout;
+    private ImageView imageView;
 
 
     @Override
@@ -51,15 +61,24 @@ public class PostsListActivity extends MyActivity {
         Intent intent = getIntent();
         String name = intent.getStringExtra("group_name");
         String desc = intent.getStringExtra("group_desc");
+        String img_url = intent.getStringExtra("group_bg_image");
+        String img_url1 = intent.getStringExtra("group_image");
         intentCode = intent.getIntExtra("postslist",-1);
         if(intentCode==STARTPOSTSLIST){
             setContentView(R.layout.activity_posts_list);
+            layout = (LinearLayout)findViewById(R.id.second_linear_layout);
+            layout.setMinimumHeight(App.H/3);
+            imageView = (ImageView)findViewById(R.id.groups_image1);
+            Glide.with(PostsListActivity.this).load(img_url1).into(imageView);
+            new DownloadImageTask().execute(img_url);
+         //   imageView.setImageURI(img_url1);
+            Toast.makeText(PostsListActivity.this,""+img_url,Toast.LENGTH_SHORT).show();
             groupName = (TextView)findViewById(R.id.text_group_name);
             groupDesc = (TextView)findViewById(R.id.text_group_desc);
-            // userObjectId = intent.getStringExtra("userObjectId");
             groupName.setText(name);
             groupDesc.setText(desc);
             groupId = intent.getStringExtra("group_id");
+
 
             Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_mpostslist);
             setSupportActionBar(toolbar);
@@ -137,8 +156,6 @@ public class PostsListActivity extends MyActivity {
         }
 
 
-
-      //Toast.makeText(this,""+intent.getStringExtra("group_id"),Toast.LENGTH_SHORT).show();
         if(intentCode==STARTPOSTSLIST){
         initPosts();
         new Thread(new Runnable() {
@@ -215,8 +232,6 @@ public class PostsListActivity extends MyActivity {
                 if(e == null){
                     for(Posts posts : list){
                         postsList.add(posts);
-                        Toast.makeText(PostsListActivity.this,"1  "+postsList.size(),Toast.LENGTH_SHORT).show();
-
                     }
                 }else {
                     e.printStackTrace();
@@ -261,5 +276,33 @@ public class PostsListActivity extends MyActivity {
                 }
             }
         });
+    }
+
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Drawable> {
+
+        protected Drawable doInBackground(String... urls) {
+            return loadImageFromNetwork(urls[0]);
+        }
+
+        protected void onPostExecute(Drawable result) {
+            layout.setBackground(result);
+        }
+    }
+
+    private Drawable loadImageFromNetwork(String imageUrl) {
+        Drawable drawable = null;
+        try {
+            drawable = Drawable.createFromStream(new URL(imageUrl).openStream(), null);
+
+        } catch (IOException e) {
+            Log.d("skythinking", e.getMessage());
+        }
+        if (drawable == null) {
+            Log.d("skythinking", "null drawable");
+        } else {
+            Log.d("skythinking", "not null drawable");
+        }
+        return drawable;
     }
 }
