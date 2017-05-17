@@ -75,7 +75,6 @@ public class GroupsActivity extends MyActivity {
         banner.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,   App.H / 3));
         frameLayout.addView(banner);
         navigationView.setCheckedItem(R.id.nav_myposts);
-     //   View view = navigationView.inflateHeaderView(R.layout.nav_header);
 
         View view = navigationView.getHeaderView(0);
         nav_view = (TextView)view.findViewById(R.id.nav_userId);

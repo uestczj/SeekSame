@@ -72,7 +72,6 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
                 int position = holder.getAdapterPosition();
                 final Bitmap bitmap1;
                 Groups groups = mGroupsList.get(position);
-             //   Glide.with(mContext).load(groups.getGroupImage().getFileUrl()).into(drawable);
 
                 final   Intent intent = new Intent(view.getContext(), PostsListActivity.class);
                 intent.putExtra("group_name",groups.getGroupName());

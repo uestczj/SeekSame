@@ -62,7 +62,6 @@ public class LoginActivity extends MyActivity {
                         editor.clear();
                     }
                     editor.apply();
-                    Toast.makeText(LoginActivity.this, "登陆成功！"+user.getObjectId(), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LoginActivity.this, GroupsActivity.class);
                     intent.putExtra("groupslist",STARTGROUPSLIST);
                     startActivity(intent);
