@@ -107,6 +107,7 @@ public class RegisterActivity extends MyActivity {
                             }else {
                                 User mUser = new User();
                                 mUser.setUsername(name);
+                                mUser.setName(name);
                                 mUser.setPassword(pwd);
                                 mUser.setUserId(mId);
                                 mUser.setUserDescribe(mDesc);
@@ -118,7 +119,7 @@ public class RegisterActivity extends MyActivity {
                                             Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
                                             startActivity(intent);
                                         }else {
-                                            Toast.makeText(RegisterActivity.this,"注册失败！",Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(RegisterActivity.this,"注册失败！"+e,Toast.LENGTH_LONG).show();
 
                                             e.printStackTrace();}}});
                             }
@@ -155,7 +156,7 @@ public class RegisterActivity extends MyActivity {
                                 Toast.makeText(RegisterActivity.this,"两次密码不一致",Toast.LENGTH_SHORT).show();
                             }else if(! pwd.isEmpty()){
                                 mUser.setPassword(pwd);
-                                mUser.setUsername(name);
+                                mUser.setName(name);
                                 mUser.setUserId(mId);
                                 mUser.setUserDescribe(mDesc);
                                 mUser.update(new UpdateListener() {
@@ -169,7 +170,7 @@ public class RegisterActivity extends MyActivity {
                                             Toast.makeText(RegisterActivity.this,"修改失败！",Toast.LENGTH_SHORT).show();
                                             e.printStackTrace();}}});
                             }else {
-                                mUser.setUsername(name);
+                                mUser.setName(name);
                                 mUser.setUserId(mId);
                                 mUser.setUserDescribe(mDesc);
                                 mUser.update(new UpdateListener() {
@@ -192,7 +193,7 @@ public class RegisterActivity extends MyActivity {
 
     public void initView(){
         User user = BmobUser.getCurrentUser(User.class);
-        userName.setText(user.getUsername());
+        userName.setText(user.getName());
         userId.setText(user.getUserId());
         userDescride.setText(user.getUserDescribe());
         button.setText("确认修改");
@@ -205,7 +206,7 @@ public class RegisterActivity extends MyActivity {
     public Boolean UserNameIsUsed(){
                     name = userName.getText().toString();
                    BmobQuery<User> query = new BmobQuery<User>();
-                   query.addWhereEqualTo("username",name);
+                   query.addWhereEqualTo("name",name);
                    query.findObjects(new FindListener<User>() {
                        @Override
                        public void done(List<User> list, BmobException e) {

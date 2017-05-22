@@ -62,8 +62,9 @@ public class LoginActivity extends MyActivity {
                         editor.clear();
                     }
                     editor.apply();
-                    Intent intent = new Intent(LoginActivity.this, GroupsActivity.class);
-                    intent.putExtra("groupslist",STARTGROUPSLIST);
+                //    Intent intent = new Intent(LoginActivity.this, GroupsActivity.class);
+                //    intent.putExtra("groupslist",STARTGROUPSLIST);
+                    Intent intent = new Intent(LoginActivity.this,Splash.class);
                     startActivity(intent);
                 } else {
                     int ErrorCode = e.getErrorCode();

@@ -1,18 +1,21 @@
 package com.example.caizejian.seeksamehobbies;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -65,27 +68,40 @@ public class PostsListActivity extends MyActivity {
     private List<User>userList = new ArrayList<>();
     private int IsAddInGroup = 0;
     private Bitmap bitmap;
+    private boolean IsInitButton = true;
+    private String group_name;
+    private String use_id;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        String name = intent.getStringExtra("group_name");
+        group_name = intent.getStringExtra("group_name");
         String desc = intent.getStringExtra("group_desc");
         String img_url = intent.getStringExtra("group_bg_image");
         String img_url1 = intent.getStringExtra("group_image");
+        use_id = User.getCurrentUser().getObjectId();
         intentCode = intent.getIntExtra("postslist",-1);
         if(intentCode==STARTPOSTSLIST){
             setContentView(R.layout.activity_posts_list);
             layout = (LinearLayout)findViewById(R.id.second_linear_layout);
             layout.setMinimumHeight(App.H/3);
             imageView = (ImageView)findViewById(R.id.groups_image1);
+           // swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swip_refersh_posts_list);
+          //  swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+          /*  swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    initPostList();
+                }
+            });*/
             Glide.with(PostsListActivity.this).load(img_url1).into(imageView);
             new DownloadImageTask().execute(img_url);
             groupName = (TextView)findViewById(R.id.text_group_name);
             groupDesc = (TextView)findViewById(R.id.text_group_desc);
             button = (Button)findViewById(R.id.btn_add_in_group);
-            groupName.setText(name);
+            groupName.setText(group_name);
             groupDesc.setText(desc);
             groupId = intent.getStringExtra("group_id");
             Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_mpostslist);
@@ -97,6 +113,15 @@ public class PostsListActivity extends MyActivity {
                 actionBar.setDisplayHomeAsUpEnabled(true);
                 actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
             }
+            SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(this);
+            String getText = pre.getString(group_name+"test"+use_id,null);
+            int getCode = pre.getInt(group_name+"int"+use_id,-1);
+            IsAddInGroup = getCode;
+            if(IsAddInGroup == 1){
+                button.setText("取消关注");
+            }
+           
+
             FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab_add_posts);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -138,6 +163,7 @@ public class PostsListActivity extends MyActivity {
                     return true;
                 }
             });
+            initPostList();
 
         }else if(intentCode == STARTMYPOSTSLIST){
             setContentView(R.layout.my_posts_list);
@@ -176,65 +202,9 @@ public class PostsListActivity extends MyActivity {
                     return true;
                 }
             });
+            initMyPostList();
         }
 
-
-        if(intentCode==STARTPOSTSLIST){
-            isAddInGroup();
-            initPosts();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    Thread.sleep(800);
-                }catch (InterruptedException e){
-                    e.printStackTrace();
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        User user = BmobUser.getCurrentUser(User.class);
-                        for(User user1 : userList){
-                            if(user1.getUsername().matches(user.getUsername())){
-                                IsAddInGroup = 1;
-                                break;
-                            }
-                        }
-                        if(IsAddInGroup == 1){
-                            button.setText("取消关注");
-                        }
-                        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycle_view_posts_list);
-                        GridLayoutManager layoutManager = new GridLayoutManager(PostsListActivity.this,1);
-                        recyclerView.setLayoutManager(layoutManager);
-                        adapter = new PostsAdapter(postsList);
-                        recyclerView.setAdapter(adapter);
-                    }
-                });
-            }
-        }).start();
-        }else if (intentCode == STARTMYPOSTSLIST){
-            initMyPosts();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try{
-                        Thread.sleep(800);
-                    }catch (InterruptedException e){
-                        e.printStackTrace();
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycle_view_posts_list);
-                            GridLayoutManager layoutManager = new GridLayoutManager(PostsListActivity.this,1);
-                            recyclerView.setLayoutManager(layoutManager);
-                            adapter = new PostsAdapter(postsList);
-                            recyclerView.setAdapter(adapter);
-                        }
-                    });
-                }
-            }).start();
-        }
     }
 
     @Override
@@ -305,9 +275,10 @@ public class PostsListActivity extends MyActivity {
                 }else {
                     e.printStackTrace();
                 }
-                IsAddInGroup=1;
             }
-        });}else {
+        });
+            IsAddInGroup=1;
+        }else {
             button.setText("关注");
             Groups groups = new Groups();
             groups.setObjectId(groupId);
@@ -327,6 +298,14 @@ public class PostsListActivity extends MyActivity {
             });
             IsAddInGroup = 0;
         }
+     /*   SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(PostsListActivity.this).edit();
+        editor.putInt("IsAddInGroup",IsAddInGroup);
+        editor.apply();*/
+        String text = "test";
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(PostsListActivity.this).edit();
+        editor.putString(group_name+"test"+use_id,text);
+        editor.putInt(group_name+"int"+use_id,IsAddInGroup);
+        editor.apply();
     }
 
 
@@ -400,5 +379,67 @@ public class PostsListActivity extends MyActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void initPostList(){
+        isAddInGroup();
+        initPosts();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    Thread.sleep(800);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(IsInitButton)
+                        {
+                            User user = BmobUser.getCurrentUser(User.class);
+                            for(User user1 : userList){
+                                if(user1.getUsername().matches(user.getUsername())){
+                                    IsAddInGroup = 1;
+                                    break;
+                                }
+                            }
+                            if(IsAddInGroup == 1){
+                                button.setText("取消关注");
+                            }}
+                        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycle_view_posts_list);
+                        GridLayoutManager layoutManager = new GridLayoutManager(PostsListActivity.this,1);
+                        recyclerView.setLayoutManager(layoutManager);
+                        adapter = new PostsAdapter(postsList);
+                        recyclerView.setAdapter(adapter);
+                     //   swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private void initMyPostList(){
+        initMyPosts();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    Thread.sleep(800);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycle_view_posts_list);
+                        GridLayoutManager layoutManager = new GridLayoutManager(PostsListActivity.this,1);
+                        recyclerView.setLayoutManager(layoutManager);
+                        adapter = new PostsAdapter(postsList);
+                        recyclerView.setAdapter(adapter);
+                    }
+                });
+            }
+        }).start();
     }
 }

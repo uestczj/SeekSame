@@ -9,7 +9,15 @@ import cn.bmob.v3.BmobUser;
 public class User extends BmobUser {
     private String userId;
     private String userDescribe;
+    private String name;
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getUserDescribe() {
         return userDescribe;

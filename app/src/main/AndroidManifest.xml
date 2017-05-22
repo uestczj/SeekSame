@@ -24,9 +24,7 @@
         android:roundIcon="@drawable/icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".LoginActivity"
-            >
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,11 +34,12 @@
         <activity android:name=".MainActivity" />
         <activity
             android:name=".RegisterActivity"
-            android:label="Register" ></activity>
+            android:label="Register" />
         <activity android:name=".GroupsActivity" />
         <activity android:name=".PostsActivity" />
         <activity android:name=".PostsListActivity" />
-        <activity android:name=".AddPostActivity"></activity>
+        <activity android:name=".AddPostActivity" />
+        <activity android:name=".Splash"></activity>
     </application>
 
 </manifest>

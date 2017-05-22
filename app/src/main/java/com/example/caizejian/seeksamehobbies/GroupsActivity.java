@@ -1,7 +1,9 @@
 package com.example.caizejian.seeksamehobbies;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -50,11 +52,19 @@ public class GroupsActivity extends MyActivity {
     LinearLayout linearLayout;
     TextView nav_view;
     TextView nav_name;
+    Boolean isInitImaUrl = false;
+
+    TextView testView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
+
+        testView = (TextView)findViewById(R.id.test_view);
+
+
+
         frameLayout = (LinearLayout)findViewById(R.id.frameLayout);
         linearLayout = (LinearLayout)findViewById(R.id.lineLayout1);
         final Intent intent = getIntent();
@@ -80,6 +90,16 @@ public class GroupsActivity extends MyActivity {
         nav_view = (TextView)view.findViewById(R.id.nav_userId);
         nav_name = (TextView)view.findViewById(R.id.nav_username);
         initNavUserMessage();
+        if(isInitImaUrl)
+        {
+            SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(this);
+            int num = pre.getInt("url_size",-1);
+            String[] Url = new String[num];
+            for(int i = 0; i<num; i++){
+                Url[i] = pre.getString("url"+i,null);
+            }
+            banner_set_img(Url);
+        }
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -121,7 +141,7 @@ public class GroupsActivity extends MyActivity {
             @Override
             public void run() {
                 try{
-                    Thread.sleep(3000);
+                    Thread.sleep(500);
                 }
                 catch (InterruptedException e) {
                     e.printStackTrace();
@@ -142,12 +162,16 @@ public class GroupsActivity extends MyActivity {
                             url[i] = imageShow.getImages().getFileUrl();
                             i++;
                         }
-                        List list = Arrays.asList(url);
-                        List arrayList = new ArrayList(list);
-                        banner.setImages(arrayList)
-                                .setImageLoader(new GlideImageLoader())
-                                .start();
-
+                        SharedPreferences.Editor editor= PreferenceManager.getDefaultSharedPreferences(GroupsActivity.this).edit();
+                       for (i=0;i<url.length;i++){
+                           editor.putString("url"+i,url[i]);
+                       }
+                       editor.putInt("url_size",url.length);
+                       editor.apply();
+                        if(!isInitImaUrl){
+                            banner_set_img(url);
+                            isInitImaUrl = true;
+                        }
                     }
                 });
 
@@ -239,6 +263,14 @@ public class GroupsActivity extends MyActivity {
                     e.printStackTrace();
                 }}
         });
+    }
+
+    private void banner_set_img(String[] url){
+        List list = Arrays.asList(url);
+        List arrayList = new ArrayList(list);
+        banner.setImages(arrayList)
+                .setImageLoader(new GlideImageLoader())
+                .start();
     }
 
 }

@@ -81,6 +81,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
                 intent.putExtra("group_bg_image",groups.getGroupBGImage().getFileUrl());
                 intent.putExtra("group_image",groups.getGroupImage().getFileUrl());
                 view.getContext().startActivity(intent);
+
             }
         });
         return holder;
