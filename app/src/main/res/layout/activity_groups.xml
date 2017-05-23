@@ -7,6 +7,7 @@
    <RelativeLayout
        android:layout_width="match_parent"
        android:layout_height="wrap_content">
+
    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
        xmlns:app="http://schemas.android.com/apk/res-auto"
        android:id="@+id/frameLayout"
@@ -22,21 +23,20 @@
           android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
           app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
           app:title="部落列表"
-          ></android.support.v7.widget.Toolbar>
+          >
+      </android.support.v7.widget.Toolbar>
+
    </LinearLayout>
+
    <LinearLayout
        android:orientation="vertical"
        android:layout_below="@+id/frameLayout"
        android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       >
-      <TextView
-          android:id="@+id/test_view"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content" />
+       android:layout_height="wrap_content">
 
       <include layout="@layout/toolbar_groupslists"/>
    </LinearLayout>
+
    </RelativeLayout>
    <android.support.design.widget.NavigationView
        style="@style/w_match_h_match"

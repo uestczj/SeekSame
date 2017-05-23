@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -13,10 +14,15 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="注册"
         ></android.support.v7.widget.Toolbar>
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_register"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <fragment
         android:id="@+id/fragment_test"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:name="layout.RegisterFragment">
     </fragment>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

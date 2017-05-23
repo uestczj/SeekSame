@@ -20,8 +20,6 @@ public class Splash extends AppCompatActivity {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 1:
-                    // 判断程序是否是第一次运行
-
                     Intent intent = new Intent(Splash.this, GroupsActivity.class);
                     intent.putExtra("groupslist",STARTGROUPSLIST);
                     startActivity(intent);

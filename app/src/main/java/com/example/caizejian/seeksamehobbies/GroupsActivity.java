@@ -54,17 +54,10 @@ public class GroupsActivity extends MyActivity {
     TextView nav_name;
     Boolean isInitImaUrl = false;
 
-    TextView testView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
-
-        testView = (TextView)findViewById(R.id.test_view);
-
-
-
         frameLayout = (LinearLayout)findViewById(R.id.frameLayout);
         linearLayout = (LinearLayout)findViewById(R.id.lineLayout1);
         final Intent intent = getIntent();

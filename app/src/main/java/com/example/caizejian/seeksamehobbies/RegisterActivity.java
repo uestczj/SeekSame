@@ -3,6 +3,7 @@ package com.example.caizejian.seeksamehobbies;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
@@ -40,6 +41,8 @@ public class RegisterActivity extends MyActivity {
     Toolbar toolbar;
     LinearLayout linearLayout;
 
+    SwipeRefreshLayout refreshLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,14 @@ public class RegisterActivity extends MyActivity {
         setContentView(R.layout.activity_register);
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         linearLayout = new LinearLayout(RegisterActivity.this);
+
+        refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refresh_register);
+      /*  refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                register();
+            }
+        });*/
 
         final Intent intent = getIntent();
         UserDataCode = intent.getIntExtra("register_edit",-2);
@@ -80,13 +91,15 @@ public class RegisterActivity extends MyActivity {
     }
 
     public void btn_register(){
+
+       // refreshLayout.setRefreshing(true);
         mResult=UserNameIsUsed();
         pwd = userPwd.getText().toString();
         cPwd = confirmPwd.getText().toString();
         name = userName.getText().toString();
         mId = userId.getText().toString();
         mDesc = userDescride.getText().toString();
-        new Thread(new Runnable() {
+       new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
@@ -227,4 +240,49 @@ public class RegisterActivity extends MyActivity {
         transaction.replace(R.id.fragment_test,fragment);
         transaction.commit();
     }
+
+    private void register()
+    {
+        mResult=UserNameIsUsed();
+        pwd = userPwd.getText().toString();
+        cPwd = confirmPwd.getText().toString();
+        name = userName.getText().toString();
+        mId = userId.getText().toString();
+        mDesc = userDescride.getText().toString();
+
+        if(mResult){
+            Toast.makeText(RegisterActivity.this,"用户名已存在",Toast.LENGTH_SHORT).show();
+        }else{
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(pwd.isEmpty()){
+                        Toast.makeText(RegisterActivity.this,"密码不能为空",Toast.LENGTH_SHORT).show();
+                    }else if(!pwd.equals(cPwd)){
+                        Toast.makeText(RegisterActivity.this,"两次密码不一致",Toast.LENGTH_SHORT).show();
+                    }else {
+                        User mUser = new User();
+                        mUser.setUsername(name);
+                        mUser.setName(name);
+                        mUser.setPassword(pwd);
+                        mUser.setUserId(mId);
+                        mUser.setUserDescribe(mDesc);
+                        mUser.signUp(new SaveListener<User>() {
+                            @Override
+                            public void done(User user, BmobException e) {
+                                if(e==null){
+                                    Toast.makeText(RegisterActivity.this,"注册成功！",Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
+                                    startActivity(intent);
+                                }else {
+                                    Toast.makeText(RegisterActivity.this,"注册失败！"+e,Toast.LENGTH_LONG).show();
+
+                                    e.printStackTrace();}}});
+                    }
+                }
+            });
+        }
+        refreshLayout.setRefreshing(false);
+    }
+
 }

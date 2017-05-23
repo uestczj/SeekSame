@@ -120,7 +120,7 @@ public class PostsListActivity extends MyActivity {
             if(IsAddInGroup == 1){
                 button.setText("取消关注");
             }
-           
+
 
             FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab_add_posts);
             fab.setOnClickListener(new View.OnClickListener() {
