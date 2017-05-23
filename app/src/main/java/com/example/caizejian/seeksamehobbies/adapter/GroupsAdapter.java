@@ -36,8 +36,9 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
         CardView cardView;
         ImageView groupsImage;
         TextView groupsName;
-        TextView groupsDesc;
         View groupView;
+        TextView groupNumOfMember;
+        TextView groupNumOfPost;
 
 
 
@@ -46,8 +47,9 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
             groupView = view;
             cardView = (CardView)view;
             groupsName = (TextView)view.findViewById(R.id.text_groups_bigName);
-            groupsDesc = (TextView)view.findViewById(R.id.text_groups_desc);
             groupsImage = (ImageView)view.findViewById(R.id.groups_image);
+            groupNumOfMember = (TextView)view.findViewById(R.id.num_of_member1);
+            groupNumOfPost = (TextView)view.findViewById(R.id.num_of_post1);
 
 
         }
@@ -80,6 +82,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
                 intent.putExtra("postslist", STARTPOSTSLIST);
                 intent.putExtra("group_bg_image",groups.getGroupBGImage().getFileUrl());
                 intent.putExtra("group_image",groups.getGroupImage().getFileUrl());
+                intent.putExtra("group_num_of_member",groups.getNumOfUser());
+                intent.putExtra("group_num_of_post",groups.getNumOfPost());
                 view.getContext().startActivity(intent);
 
             }
@@ -91,7 +95,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder,int position){
         Groups groups = mGroupsList.get(position);
         holder.groupsName.setText(groups.getGroupName());
-        holder.groupsDesc.setText(groups.getDesc());
+        holder.groupNumOfMember.setText(""+groups.getNumOfUser());
+        holder.groupNumOfPost.setText(""+groups.getNumOfPost());
         Glide.with(mContext).load(groups.getGroupImage().getFileUrl()).into(holder.groupsImage);
     }
 

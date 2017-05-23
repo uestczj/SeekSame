@@ -52,86 +52,84 @@ import zhangyf.vir56k.androidimageblur.BlurUtil;
 public class PostsListActivity extends MyActivity {
 
     private TextView groupName;
-    private TextView groupDesc;
+    private TextView groupNumOfMember;
     private Button addPosrts;
     private Button addGroup;
     private String groupId;
-    private List<Posts>postsList=new ArrayList<>();
+    private List<Posts> postsList = new ArrayList<>();
     private PostsAdapter adapter;
-    private   String userObjectId;
+    private String userObjectId;
     private int intentCode;
     private DrawerLayout mDrawerLayout;
     private LinearLayout layout;
     private ImageView imageView;
     private Button button;
-    private List<Groups>groupsList = new ArrayList<>();
-    private List<User>userList = new ArrayList<>();
+    private List<Groups> groupsList = new ArrayList<>();
+    private List<User> userList = new ArrayList<>();
     private int IsAddInGroup = 0;
     private Bitmap bitmap;
     private boolean IsInitButton = true;
     private String group_name;
     private String use_id;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private int groupNumOfPost;
+    private TextView NumOfPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         group_name = intent.getStringExtra("group_name");
-        String desc = intent.getStringExtra("group_desc");
         String img_url = intent.getStringExtra("group_bg_image");
         String img_url1 = intent.getStringExtra("group_image");
+        int numOfMember = intent.getIntExtra("group_num_of_member",-1);
+        groupNumOfPost = intent.getIntExtra("group_num_of_post",-1);
         use_id = User.getCurrentUser().getObjectId();
-        intentCode = intent.getIntExtra("postslist",-1);
-        if(intentCode==STARTPOSTSLIST){
+        intentCode = intent.getIntExtra("postslist", -1);
+        if (intentCode == STARTPOSTSLIST) {
             setContentView(R.layout.activity_posts_list);
-            layout = (LinearLayout)findViewById(R.id.second_linear_layout);
-            layout.setMinimumHeight(App.H/3);
-            imageView = (ImageView)findViewById(R.id.groups_image1);
-           // swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swip_refersh_posts_list);
-          //  swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
-          /*  swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    initPostList();
-                }
-            });*/
+            layout = (LinearLayout) findViewById(R.id.second_linear_layout);
+            layout.setMinimumHeight(App.H / 3);
+            imageView = (ImageView) findViewById(R.id.groups_image1);
             Glide.with(PostsListActivity.this).load(img_url1).into(imageView);
             new DownloadImageTask().execute(img_url);
-            groupName = (TextView)findViewById(R.id.text_group_name);
-            groupDesc = (TextView)findViewById(R.id.text_group_desc);
-            button = (Button)findViewById(R.id.btn_add_in_group);
+            groupName = (TextView) findViewById(R.id.text_group_name);
+            groupNumOfMember = (TextView) findViewById(R.id.num_of_member);
+            NumOfPost = (TextView)findViewById(R.id.num_of_post);
+            button = (Button) findViewById(R.id.btn_add_in_group);
             groupName.setText(group_name);
-            groupDesc.setText(desc);
+            groupNumOfMember.setText(""+numOfMember);
+            NumOfPost.setText(""+groupNumOfPost);
             groupId = intent.getStringExtra("group_id");
-            Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_mpostslist);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_mpostslist);
             setSupportActionBar(toolbar);
-            mDrawerLayout = (DrawerLayout)findViewById(R.id.draw_layout_mpostslist);
-            NavigationView navigationView = (NavigationView)findViewById(R.id.nav_views);
+            mDrawerLayout = (DrawerLayout) findViewById(R.id.draw_layout_mpostslist);
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_views);
             ActionBar actionBar = getSupportActionBar();
-            if(actionBar!=null){
+            if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
                 actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
             }
             SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(this);
-            String getText = pre.getString(group_name+"test"+use_id,null);
-            int getCode = pre.getInt(group_name+"int"+use_id,-1);
+            String getText = pre.getString(group_name + "test" + use_id, null);
+            int getCode = pre.getInt(group_name + "int" + use_id, -1);
             IsAddInGroup = getCode;
-            if(IsAddInGroup == 1){
+            if (IsAddInGroup == 1) {
                 button.setText("取消关注");
             }
 
 
-            FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab_add_posts);
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add_posts);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Snackbar.make(v,"发帖",Snackbar.LENGTH_LONG)
+                    Snackbar.make(v, "发帖", Snackbar.LENGTH_LONG)
                             .setAction("我要发帖", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent = new Intent(PostsListActivity.this,AddPostActivity.class);
-                                    intent.putExtra("group_id",groupId);
+                                    Intent intent = new Intent(PostsListActivity.this, AddPostActivity.class);
+                                    intent.putExtra("group_id", groupId);
+                                    intent.putExtra("group_of_post", groupNumOfPost);
                                     startActivity(intent);
                                 }
                             }).show();
@@ -142,22 +140,22 @@ public class PostsListActivity extends MyActivity {
             navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    switch (item.getItemId()){
+                    switch (item.getItemId()) {
                         case R.id.nav_myposts:
-                            Intent intent = new Intent(PostsListActivity.this,PostsListActivity.class);
-                            intent.putExtra("postslist",STARTMYPOSTSLIST);
+                            Intent intent = new Intent(PostsListActivity.this, PostsListActivity.class);
+                            intent.putExtra("postslist", STARTMYPOSTSLIST);
                             startActivity(intent);
                             break;
                         case R.id.nav_mygroups:
-                            Intent intent1 = new Intent(PostsListActivity.this,GroupsActivity.class);
-                            intent1.putExtra("groupslist",STARTMYGROUPSLIST);
+                            Intent intent1 = new Intent(PostsListActivity.this, GroupsActivity.class);
+                            intent1.putExtra("groupslist", STARTMYGROUPSLIST);
                             startActivity(intent1);
                             break;
                         case R.id.nav_editdata:
-                            Toast.makeText(PostsListActivity.this,"editdata",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PostsListActivity.this, "editdata", Toast.LENGTH_SHORT).show();
                             break;
                         case R.id.nav_logout:
-                            Toast.makeText(PostsListActivity.this,"logout",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PostsListActivity.this, "logout", Toast.LENGTH_SHORT).show();
                             break;
                     }
                     return true;
@@ -165,14 +163,14 @@ public class PostsListActivity extends MyActivity {
             });
             initPostList();
 
-        }else if(intentCode == STARTMYPOSTSLIST){
+        } else if (intentCode == STARTMYPOSTSLIST) {
             setContentView(R.layout.my_posts_list);
-            Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_mypostlist);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_mypostlist);
             setSupportActionBar(toolbar);
-            mDrawerLayout = (DrawerLayout)findViewById(R.id.draw_layout_mpostslist);
-            NavigationView navigationView = (NavigationView)findViewById(R.id.nav_viewss);
+            mDrawerLayout = (DrawerLayout) findViewById(R.id.draw_layout_mpostslist);
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_viewss);
             ActionBar actionBar = getSupportActionBar();
-            if(actionBar!=null){
+            if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
                 actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
             }
@@ -181,22 +179,22 @@ public class PostsListActivity extends MyActivity {
             navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    switch (item.getItemId()){
+                    switch (item.getItemId()) {
                         case R.id.nav_myposts:
-                            Intent intent = new Intent(PostsListActivity.this,PostsListActivity.class);
-                            intent.putExtra("postslist",STARTMYPOSTSLIST);
+                            Intent intent = new Intent(PostsListActivity.this, PostsListActivity.class);
+                            intent.putExtra("postslist", STARTMYPOSTSLIST);
                             startActivity(intent);
                             break;
                         case R.id.nav_mygroups:
-                            Intent intent1 = new Intent(PostsListActivity.this,GroupsActivity.class);
-                            intent1.putExtra("groupslist",STARTMYGROUPSLIST);
+                            Intent intent1 = new Intent(PostsListActivity.this, GroupsActivity.class);
+                            intent1.putExtra("groupslist", STARTMYGROUPSLIST);
                             startActivity(intent1);
                             break;
                         case R.id.nav_editdata:
-                            Toast.makeText(PostsListActivity.this,"editdata",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PostsListActivity.this, "editdata", Toast.LENGTH_SHORT).show();
                             break;
                         case R.id.nav_logout:
-                            Toast.makeText(PostsListActivity.this,"logout",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PostsListActivity.this, "logout", Toast.LENGTH_SHORT).show();
                             break;
                     }
                     return true;
@@ -208,8 +206,8 @@ public class PostsListActivity extends MyActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
@@ -219,36 +217,17 @@ public class PostsListActivity extends MyActivity {
         return true;
     }
 
-    public void initPosts(){
-        BmobQuery<Posts>query = new BmobQuery<Posts>();
+    public void initPosts() {
+        BmobQuery<Posts> query = new BmobQuery<Posts>();
         Groups groups = new Groups();
         groups.setObjectId(groupId);
-        query.addWhereEqualTo("groups",groups);
+        query.addWhereEqualTo("groups", groups);
         query.findObjects(new FindListener<Posts>() {
             @Override
             public void done(List<Posts> list, BmobException e) {
-                if(e == null){
-                    for(Posts posts : list){
+                if (e == null) {
+                    for (Posts posts : list) {
                         postsList.add(posts);
-                    }
-                }else {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    public void initMyPosts(){
-        BmobQuery<Posts>query = new BmobQuery<Posts>();
-        final User user = BmobUser.getCurrentUser(User.class);
-        query.addWhereEqualTo("author",user);
-        query.findObjects(new FindListener<Posts>() {
-            @Override
-            public void done(List<Posts> list, BmobException e) {
-                if(e==null){
-                    for(Posts posts :list) {
-                        postsList.add(posts);
-                        Toast.makeText(PostsListActivity.this,"查询"+user.getUsername()+"成功！",Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     e.printStackTrace();
@@ -257,31 +236,51 @@ public class PostsListActivity extends MyActivity {
         });
     }
 
-    public void btn_add_in_group(View view){
-        if(IsAddInGroup == 0)
-        {
-        button.setText("取消关注");
-        User user = BmobUser.getCurrentUser(User.class);
-        Groups groups = new Groups();
-        groups.setObjectId(groupId);
-        BmobRelation relation = new BmobRelation();
-        relation.add(user);
-        groups.setMemOfUser(relation);
-        groups.update(new UpdateListener() {
+    public void initMyPosts() {
+        BmobQuery<Posts> query = new BmobQuery<Posts>();
+        final User user = BmobUser.getCurrentUser(User.class);
+        query.addWhereEqualTo("author", user);
+        query.findObjects(new FindListener<Posts>() {
             @Override
-            public void done(BmobException e) {
-                if(e==null){
-                    Log.i("bmob","成功："+e.getMessage());
-                }else {
+            public void done(List<Posts> list, BmobException e) {
+                if (e == null) {
+                    for (Posts posts : list) {
+                        postsList.add(posts);
+                        Toast.makeText(PostsListActivity.this, "查询" + user.getUsername() + "成功！", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
                     e.printStackTrace();
                 }
             }
         });
-            IsAddInGroup=1;
-        }else {
+    }
+
+    public void btn_add_in_group(View view) {
+        if (IsAddInGroup == 0) {
+            button.setText("取消关注");
+            User user = BmobUser.getCurrentUser(User.class);
+            Groups groups = new Groups();
+            groups.setObjectId(groupId);
+            groups.increment("numOfUser");
+            BmobRelation relation = new BmobRelation();
+            relation.add(user);
+            groups.setMemOfUser(relation);
+            groups.update(new UpdateListener() {
+                @Override
+                public void done(BmobException e) {
+                    if (e == null) {
+                        Log.i("bmob", "成功：" + e.getMessage());
+                    } else {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            IsAddInGroup = 1;
+        } else {
             button.setText("关注");
             Groups groups = new Groups();
             groups.setObjectId(groupId);
+            groups.increment("numOfUser",-1);
             User user = BmobUser.getCurrentUser(User.class);
             BmobRelation relation = new BmobRelation();
             relation.remove(user);
@@ -289,22 +288,19 @@ public class PostsListActivity extends MyActivity {
             groups.update(new UpdateListener() {
                 @Override
                 public void done(BmobException e) {
-                    if(e==null){
-                        Log.i("bmob","成功："+e.getMessage());
-                    }else{
-                        Log.i("bmob","失败："+e.getMessage());
+                    if (e == null) {
+                        Log.i("bmob", "成功：" + e.getMessage());
+                    } else {
+                        Log.i("bmob", "失败：" + e.getMessage());
                     }
                 }
             });
             IsAddInGroup = 0;
         }
-     /*   SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(PostsListActivity.this).edit();
-        editor.putInt("IsAddInGroup",IsAddInGroup);
-        editor.apply();*/
         String text = "test";
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(PostsListActivity.this).edit();
-        editor.putString(group_name+"test"+use_id,text);
-        editor.putInt(group_name+"int"+use_id,IsAddInGroup);
+        editor.putString(group_name + "test" + use_id, text);
+        editor.putInt(group_name + "int" + use_id, IsAddInGroup);
         editor.apply();
     }
 
@@ -316,10 +312,8 @@ public class PostsListActivity extends MyActivity {
         }
 
         protected void onPostExecute(Drawable result) {
-
             drawableToBitamp(result);
-            Bitmap newImg = BlurUtil.doBlur(bitmap, 3, 2);
-            bitmap.recycle();
+            Bitmap newImg = BlurUtil.doBlur(bitmap, 2, 2);
             layout.setBackground(new BitmapDrawable(getResources(), newImg));
         }
     }
@@ -340,31 +334,31 @@ public class PostsListActivity extends MyActivity {
         return drawable;
     }
 
-    private void isAddInGroup()
-    {
+    private void isAddInGroup() {
         userList.clear();
-        BmobQuery<User>query = new BmobQuery<User>();
+        BmobQuery<User> query = new BmobQuery<User>();
         Groups groups = new Groups();
         groups.setObjectId(groupId);
         query.addWhereRelatedTo("memOfUser", new BmobPointer(groups));
         query.findObjects(new FindListener<User>() {
             @Override
             public void done(List<User> list, BmobException e) {
-                if(e == null){
-                    for(User user : list){
+                if (e == null) {
+                    for (User user : list) {
                         userList.add(user);
                     }
-                }else {
+                } else {
                     e.printStackTrace();
                 }
             }
         });
     }
-    private void drawableToBitamp(Drawable drawable)
-     {
-                BitmapDrawable bd = (BitmapDrawable) drawable;
-                bitmap = bd.getBitmap();
-     }
+
+    private void drawableToBitamp(Drawable drawable) {
+        BitmapDrawable bd = (BitmapDrawable) drawable;
+        bitmap = bd.getBitmap();
+    }
+
     private void showBlurBackground() {
         Bitmap img1;
         try {
@@ -381,59 +375,60 @@ public class PostsListActivity extends MyActivity {
         }
     }
 
-    private void initPostList(){
+    private void initPostList() {
         isAddInGroup();
         initPosts();
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try{
+                try {
                     Thread.sleep(800);
-                }catch (InterruptedException e){
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if(IsInitButton)
-                        {
+                        if (IsInitButton) {
                             User user = BmobUser.getCurrentUser(User.class);
-                            for(User user1 : userList){
-                                if(user1.getUsername().matches(user.getUsername())){
+                            for (User user1 : userList) {
+                                if (user1.getUsername().matches(user.getUsername())) {
                                     IsAddInGroup = 1;
                                     break;
                                 }
                             }
-                            if(IsAddInGroup == 1){
+                            if (IsAddInGroup == 1) {
                                 button.setText("取消关注");
-                            }}
-                        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycle_view_posts_list);
-                        GridLayoutManager layoutManager = new GridLayoutManager(PostsListActivity.this,1);
+                            }
+                        }
+                        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view_posts_list);
+                        //  recyclerView.setNestedScrollingEnabled(false);
+                        GridLayoutManager layoutManager = new GridLayoutManager(PostsListActivity.this, 1);
                         recyclerView.setLayoutManager(layoutManager);
                         adapter = new PostsAdapter(postsList);
                         recyclerView.setAdapter(adapter);
-                     //   swipeRefreshLayout.setRefreshing(false);
+                        //   swipeRefreshLayout.setRefreshing(false);
                     }
                 });
             }
         }).start();
     }
 
-    private void initMyPostList(){
+    private void initMyPostList() {
         initMyPosts();
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try{
+                try {
                     Thread.sleep(800);
-                }catch (InterruptedException e){
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycle_view_posts_list);
-                        GridLayoutManager layoutManager = new GridLayoutManager(PostsListActivity.this,1);
+                        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view_posts_list);
+                        GridLayoutManager layoutManager = new GridLayoutManager(PostsListActivity.this, 1);
                         recyclerView.setLayoutManager(layoutManager);
                         adapter = new PostsAdapter(postsList);
                         recyclerView.setAdapter(adapter);

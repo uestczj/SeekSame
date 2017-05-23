@@ -13,8 +13,8 @@ public class Groups extends BmobObject {
     private String groupName;
     private BmobFile groupImage;
     private String desc;
-    private int numOfPost;
-    private int numOfUser;
+    private Integer numOfPost;
+    private Integer numOfUser;
     private BmobRelation memOfUser;
     private BmobFile groupBGImage;
 

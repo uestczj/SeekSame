@@ -58,38 +58,37 @@ public class GroupsActivity extends MyActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
-        frameLayout = (LinearLayout)findViewById(R.id.frameLayout);
-        linearLayout = (LinearLayout)findViewById(R.id.lineLayout1);
+        frameLayout = (LinearLayout) findViewById(R.id.frameLayout);
+
         final Intent intent = getIntent();
-        groupslistCode = intent.getIntExtra("groupslist",-2);
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_groupslist);
+        groupslistCode = intent.getIntExtra("groupslist", -2);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_groupslist);
 
         setSupportActionBar(toolbar);
-        mDrawerLayout = (DrawerLayout)findViewById(R.id.draw_layout_groupslists);
-        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.draw_layout_groupslists);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar!=null){
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
         initImagesList();
         View anotherHeader = LayoutInflater.from(this).inflate(R.layout.header, null);
         banner = (Banner) anotherHeader.findViewById(R.id.banner);
-        banner.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,   App.H / 3));
-        frameLayout.addView(banner);
+        banner.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, App.H / 4));
+        frameLayout.addView(banner, 0);
         navigationView.setCheckedItem(R.id.nav_myposts);
 
         View view = navigationView.getHeaderView(0);
-        nav_view = (TextView)view.findViewById(R.id.nav_userId);
-        nav_name = (TextView)view.findViewById(R.id.nav_username);
+        nav_view = (TextView) view.findViewById(R.id.nav_userId);
+        nav_name = (TextView) view.findViewById(R.id.nav_username);
         initNavUserMessage();
-        if(isInitImaUrl)
-        {
+        if (isInitImaUrl) {
             SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(this);
-            int num = pre.getInt("url_size",-1);
+            int num = pre.getInt("url_size", -1);
             String[] Url = new String[num];
-            for(int i = 0; i<num; i++){
-                Url[i] = pre.getString("url"+i,null);
+            for (int i = 0; i < num; i++) {
+                Url[i] = pre.getString("url" + i, null);
             }
             banner_set_img(Url);
         }
@@ -97,35 +96,35 @@ public class GroupsActivity extends MyActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.nav_myposts:
-                        Intent intent = new Intent(GroupsActivity.this,PostsListActivity.class);
-                        intent.putExtra("postslist",STARTMYPOSTSLIST);
+                        Intent intent = new Intent(GroupsActivity.this, PostsListActivity.class);
+                        intent.putExtra("postslist", STARTMYPOSTSLIST);
                         startActivity(intent);
-                    break;
+                        break;
                     case R.id.nav_mygroups:
-                        Intent intent1 = new Intent(GroupsActivity.this,GroupsActivity.class);
-                        intent1.putExtra("groupslist",STARTMYGROUPSLIST);
+                        Intent intent1 = new Intent(GroupsActivity.this, GroupsActivity.class);
+                        intent1.putExtra("groupslist", STARTMYGROUPSLIST);
                         startActivity(intent1);
                         break;
                     case R.id.nav_editdata:
-                        Intent intent2 = new Intent(GroupsActivity.this,RegisterActivity.class);
-                        intent2.putExtra("register_edit",STARTEDITDATA);
+                        Intent intent2 = new Intent(GroupsActivity.this, RegisterActivity.class);
+                        intent2.putExtra("register_edit", STARTEDITDATA);
                         startActivity(intent2);
                         break;
                     case R.id.nav_logout:
-                        Intent intent3 = new Intent(GroupsActivity.this,LoginActivity.class);
+                        Intent intent3 = new Intent(GroupsActivity.this, LoginActivity.class);
                         startActivity(intent3);
-                        Toast.makeText(GroupsActivity.this,"logout",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GroupsActivity.this, "logout", Toast.LENGTH_SHORT).show();
                         break;
                 }
                 return true;
             }
         });
 
-        if(groupslistCode == STARTGROUPSLIST){
+        if (groupslistCode == STARTGROUPSLIST) {
             initGroups();
-        }else {
+        } else {
             initMyGroups();
         }
 
@@ -133,35 +132,33 @@ public class GroupsActivity extends MyActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try{
+                try {
                     Thread.sleep(500);
-                }
-                catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycle_view);
-                        GridLayoutManager layoutManager = new GridLayoutManager(GroupsActivity.this,1);
+                        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
+                        GridLayoutManager layoutManager = new GridLayoutManager(GroupsActivity.this, 1);
                         recyclerView.setLayoutManager(layoutManager);
                         adapter = new GroupsAdapter(groupsList);
                         recyclerView.setAdapter(adapter);
                         String[] url = new String[5];
                         int i = 0;
-                        for(ImageShow imageShow : imageShowList)
-                        {
+                        for (ImageShow imageShow : imageShowList) {
 
                             url[i] = imageShow.getImages().getFileUrl();
                             i++;
                         }
-                        SharedPreferences.Editor editor= PreferenceManager.getDefaultSharedPreferences(GroupsActivity.this).edit();
-                       for (i=0;i<url.length;i++){
-                           editor.putString("url"+i,url[i]);
-                       }
-                       editor.putInt("url_size",url.length);
-                       editor.apply();
-                        if(!isInitImaUrl){
+                        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(GroupsActivity.this).edit();
+                        for (i = 0; i < url.length; i++) {
+                            editor.putString("url" + i, url[i]);
+                        }
+                        editor.putInt("url_size", url.length);
+                        editor.apply();
+                        if (!isInitImaUrl) {
                             banner_set_img(url);
                             isInitImaUrl = true;
                         }
@@ -173,8 +170,8 @@ public class GroupsActivity extends MyActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
@@ -184,81 +181,84 @@ public class GroupsActivity extends MyActivity {
         return true;
     }
 
-    public void initNavUserMessage(){
+    public void initNavUserMessage() {
         User user = BmobUser.getCurrentUser(User.class);
         nav_view.setText(user.getUserId());
         nav_name.setText(user.getUsername());
     }
 
-    public void initGroups(){
+    public void initGroups() {
         groupsList.clear();
         String start = "2015-05-01 00:00:00";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date  = null;
+        Date date = null;
         try {
             date = sdf.parse(start);
         } catch (ParseException e) {
             e.printStackTrace();
         }
         BmobQuery<Groups> query = new BmobQuery<Groups>();
-        query.addWhereGreaterThan("createdAt",new BmobDate(date));
+        query.addWhereGreaterThan("createdAt", new BmobDate(date));
         query.findObjects(new FindListener<Groups>() {
             @Override
             public void done(List<Groups> list, BmobException e) {
-                if(e==null) {
+                if (e == null) {
                     for (Groups groups : list) {
                         groupsList.add(groups);
                     }
-                }else {
+                } else {
                     e.printStackTrace();
                 }
             }
         });
     }
-    public void initMyGroups(){
+
+    public void initMyGroups() {
         groupsList.clear();
         BmobQuery<Groups> query = new BmobQuery<Groups>();
         User user = BmobUser.getCurrentUser(User.class);
-        query.addWhereEqualTo("memOfUser",user);
+        query.addWhereEqualTo("memOfUser", user);
         query.findObjects(new FindListener<Groups>() {
             @Override
             public void done(List<Groups> list, BmobException e) {
-                if(e == null){
-                    for(Groups groups : list){
+                if (e == null) {
+                    for (Groups groups : list) {
                         groupsList.add(groups);
                     }
-                }else {
+                } else {
                     e.printStackTrace();
                 }
             }
         });
     }
-    private void initImagesList(){
+
+    private void initImagesList() {
         imageShowList.clear();
         String start = "2015-05-01 00:00:00";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date data = null;
-        try{
+        try {
             data = sdf.parse(start);
-        }catch (ParseException e){
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         BmobQuery<ImageShow> query = new BmobQuery<ImageShow>();
-        query.addWhereGreaterThan("createdAt",new BmobDate(data));
+        query.addWhereGreaterThan("createdAt", new BmobDate(data));
         query.findObjects(new FindListener<ImageShow>() {
             @Override
             public void done(List<ImageShow> list, BmobException e) {
-                if(e == null){
-                    for(ImageShow imageShow : list) {
+                if (e == null) {
+                    for (ImageShow imageShow : list) {
                         imageShowList.add(imageShow);
                     }
-                }else {
+                } else {
                     e.printStackTrace();
-                }}
+                }
+            }
         });
     }
 
-    private void banner_set_img(String[] url){
+    private void banner_set_img(String[] url) {
         List list = Arrays.asList(url);
         List arrayList = new ArrayList(list);
         banner.setImages(arrayList)

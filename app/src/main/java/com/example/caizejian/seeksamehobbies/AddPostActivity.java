@@ -19,6 +19,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -54,6 +55,7 @@ import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadBatchListener;
 
 /**
@@ -317,6 +319,7 @@ public class AddPostActivity extends MyActivity {
         newsEntity.setPic(files.get(0));
         Groups groups = new Groups();
         groups.setObjectId(mId);
+        groups.increment("numOfPost");
         newsEntity.setGroups(groups);
         newsEntity.save(new SaveListener<String>() {
             @Override
@@ -326,6 +329,16 @@ public class AddPostActivity extends MyActivity {
                 ToastUtils.showShort(getApplicationContext(), getString(R.string.text_publish_successfully));
                 AddPostActivity.this.setResult(ConstantUtils.RESULT_UPDATE_INFO, new Intent());
                 finish();
+            }
+        });
+        groups.update(new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+                if (e == null) {
+                    Log.i("bmob", "成功：" + e.getMessage());
+                } else {
+                    e.printStackTrace();
+                }
             }
         });
     }
